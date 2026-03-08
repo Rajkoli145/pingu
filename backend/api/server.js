@@ -4,6 +4,7 @@ const assignmentsRoutes = require("./routes/assignments");
 const noticesRoutes = require("./routes/notices");
 const eventsRoutes = require("./routes/events");
 const lecturesRoutes = require("./routes/lectures");
+const attendanceRoutes = require("./routes/attendance");
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/assignments", assignmentsRoutes);
 app.use("/notices", noticesRoutes);
 app.use("/events", eventsRoutes);
 app.use("/lectures", lecturesRoutes);
+app.use("/attendance", attendanceRoutes);
 
 const PORT = process.env.PORT || 5001;
 
