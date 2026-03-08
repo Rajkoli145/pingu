@@ -3,6 +3,7 @@ const cors = require("cors");
 const assignmentsRoutes = require("./routes/assignments");
 const noticesRoutes = require("./routes/notices");
 const eventsRoutes = require("./routes/events");
+const lecturesRoutes = require("./routes/lectures");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
 app.use("/assignments", assignmentsRoutes);
 app.use("/notices", noticesRoutes);
 app.use("/events", eventsRoutes);
+app.use("/lectures", lecturesRoutes);
 
 const PORT = process.env.PORT || 5001;
 
