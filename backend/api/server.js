@@ -1,14 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
-const assignmentsRoutes = require("./routes/assignments");
-const noticesRoutes = require("./routes/notices");
-const eventsRoutes = require("./routes/events");
-const lecturesRoutes = require("./routes/lectures");
-const attendanceRoutes = require("./routes/attendance");
-const commandCenterRoutes = require("./routes/commandCenter");
-const notificationRoutes = require("./routes/notifications");
-const scheduler = require("./services/scheduler");
+const errorHandler = require("./middleware/errorHandler");
+const scheduler = require("./config/scheduler");
 
 const app = express();
 
@@ -25,16 +19,19 @@ app.get("/", (req, res) => {
   res.json({ message: "Pingu API running" });
 });
 
-app.use("/assignments", assignmentsRoutes);
-app.use("/notices", noticesRoutes);
-app.use("/events", eventsRoutes);
-app.use("/lectures", lecturesRoutes);
-app.use("/attendance", attendanceRoutes);
-app.use("/command-center", commandCenterRoutes);
-app.use("/notifications", notificationRoutes);
+// Routes
+app.use("/assignments", require("./routes/assignments"));
+app.use("/notices", require("./routes/notices"));
+app.use("/events", require("./routes/events"));
+app.use("/lectures", require("./routes/lectures"));
+app.use("/attendance", require("./routes/attendance"));
+app.use("/command-center", require("./routes/commandCenter"));
+app.use("/notifications", require("./routes/notifications"));
+
+// Global Error Handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5001;
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
