@@ -5,3 +5,24 @@ export interface Assignment {
   dueDate: string;
   status: "pending" | "submitted";
 }
+
+export interface Notice {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  location: string;
+  date: string;
+}
+
+export interface Lecture {
+  id: string;
+  subject: string;
+  professor: string;
+  time: string;
+}
