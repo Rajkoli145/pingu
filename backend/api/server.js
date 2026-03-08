@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const assignmentsRoutes = require("./routes/assignments");
 
 const app = express();
 
@@ -9,6 +10,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.json({ message: "Pingu API running" });
 });
+
+app.use("/assignments", assignmentsRoutes);
 
 const PORT = process.env.PORT || 5001;
 
