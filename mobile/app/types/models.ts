@@ -26,3 +26,10 @@ export interface Lecture {
   professor: string;
   time: string;
 }
+
+export interface Attendance {
+  id: string;
+  subject: string;
+  attended: number;
+  total: number;
+}
