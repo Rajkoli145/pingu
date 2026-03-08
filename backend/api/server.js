@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const assignmentsRoutes = require("./routes/assignments");
+const noticesRoutes = require("./routes/notices");
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/assignments", assignmentsRoutes);
+app.use("/notices", noticesRoutes);
 
 const PORT = process.env.PORT || 5001;
 
