@@ -8,16 +8,16 @@ class CommandCenterService {
   /**
    * Aggregates key academic insights for the dashboard.
    */
-  async getDashboardSummary() {
+  async getDashboardSummary(userId) {
     const today = new Date();
     const next48Hours = new Date(today.getTime() + 48 * 60 * 60 * 1000);
     const next7Days = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     const [assignments, lectures, attendance, events] = await Promise.all([
-      Assignment.find({ dueDate: { $lte: next48Hours }, status: "pending" }).sort({ dueDate: 1 }),
-      Lecture.find({}).sort({ time: 1 }), // Simplifying 'next lecture' logic for now
-      Attendance.find({}),
-      Event.find({ date: { $gte: today, $lte: next7Days } }).sort({ date: 1 })
+      Assignment.find({ user: userId, dueDate: { $lte: next48Hours }, status: "pending" }).sort({ dueDate: 1 }),
+      Lecture.find({ user: userId }).sort({ time: 1 }), 
+      Attendance.find({ user: userId }),
+      Event.find({ user: userId, date: { $gte: today, $lte: next7Days } }).sort({ date: 1 })
     ]);
 
     // Intelligence: Find the next lecture based on current time
@@ -36,9 +36,6 @@ class CommandCenterService {
 
   _findNextLecture(lectures) {
     if (!lectures || lectures.length === 0) return null;
-    
-    // For demo/simplicity, we'll return the first one if we can't perfectly match time yet
-    // In a real app, we'd compare against current server time
     return lectures[0]; 
   }
 

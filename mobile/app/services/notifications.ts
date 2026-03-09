@@ -1,8 +1,13 @@
+import { getAuthToken } from "./auth";
+
 const API_URL = "http://localhost:5001";
 
 export const getNotifications = async () => {
   try {
-    const response = await fetch(`${API_URL}/notifications`);
+    const token = getAuthToken();
+    const response = await fetch(`${API_URL}/notifications`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!response.ok) {
       throw new Error(`Notifications Sync Error: ${response.status}`);
     }
@@ -15,8 +20,10 @@ export const getNotifications = async () => {
 
 export const markAsRead = async (id: string) => {
   try {
+    const token = getAuthToken();
     const response = await fetch(`${API_URL}/notifications/${id}/read`, {
       method: "PATCH",
+      headers: { "Authorization": `Bearer ${token}` }
     });
     return await response.json();
   } catch (error) {
@@ -27,8 +34,10 @@ export const markAsRead = async (id: string) => {
 
 export const clearNotification = async (id: string) => {
   try {
+    const token = getAuthToken();
     const response = await fetch(`${API_URL}/notifications/${id}`, {
       method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
     });
     return await response.json();
   } catch (error) {

@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const LectureSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: [true, "Lecture must belong to a user"]
+  },
   subject: {
     type: String,
     required: true

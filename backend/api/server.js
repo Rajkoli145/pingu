@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
+app.use("/auth", require("./routes/auth"));
 app.use("/assignments", require("./routes/assignments"));
 app.use("/notices", require("./routes/notices"));
 app.use("/events", require("./routes/events"));

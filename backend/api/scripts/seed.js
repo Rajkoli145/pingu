@@ -4,123 +4,84 @@ const Notice = require("../models/Notice");
 const Event = require("../models/Event");
 const Lecture = require("../models/Lecture");
 const Attendance = require("../models/Attendance");
+const User = require("../models/User");
+const Notification = require("../models/Notification");
+require("dotenv").config();
 
-const MONGO_URI = "mongodb://localhost:27017/pingu";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/pingu";
 
-const sampleAssignments = [
-  {
-    title: "AI Research Paper",
-    subject: "Artificial Intelligence",
-    dueDate: new Date("2026-03-25"),
-    status: "pending"
-  },
-  {
-    title: "Database Optimization Lab",
-    subject: "Database Systems",
-    dueDate: new Date("2026-03-20"),
-    status: "submitted"
-  },
-  {
-    title: "Mobile App Prototypes",
-    subject: "Mobile Development",
-    dueDate: new Date("2026-03-30"),
-    status: "pending"
-  }
-];
-
-const sampleNotices = [
-  {
-    title: "Midterm Examination Schedule",
-    description: "The midterm exams will commence from March 15th. Check the portal for your seating arrangement.",
-    date: new Date("2026-03-08")
-  },
-  {
-    title: "Annual Cultural Fest Recruitment",
-    description: "Auditions for the dance and music teams start this Friday at the main auditorium.",
-    date: new Date("2026-03-10")
-  },
-  {
-    title: "Library Maintenance Notice",
-    description: "The library will be closed for maintenance on Sunday from 9:00 AM to 5:00 PM.",
-    date: new Date("2026-03-12")
-  }
-];
-
-const sampleEvents = [
-  {
-    title: "Global Tech Summit 2026",
-    location: "Main Convention Center",
-    date: new Date("2026-04-05"),
-    time: "09:00 AM"
-  },
-  {
-    title: "Inter-College Hackathon",
-    location: "Innovation Lab",
-    date: new Date("2026-04-12"),
-    time: "10:00 AM"
-  },
-  {
-    title: "Career Fair: Tech Edition",
-    location: "Grand Hall",
-    date: new Date("2026-04-20"),
-    time: "11:00 AM"
-  }
-];
-
-const sampleLectures = [
-  {
-    subject: "Artificial Intelligence",
-    professor: "Dr. Rao",
-    time: "10:00 AM",
-    room: "Room 402"
-  },
-  {
-    subject: "Database Systems",
-    professor: "Dr. Sharma",
-    time: "11:30 AM",
-    room: "Room 305"
-  },
-  {
-    subject: "Operating Systems",
-    professor: "Prof. Mehta",
-    time: "02:00 PM",
-    room: "Room 210"
-  }
-];
-
-const sampleAttendance = [
-  { subject: "Artificial Intelligence", attendancePercentage: 88 },
-  { subject: "Database Systems", attendancePercentage: 92 },
-  { subject: "Operating Systems", attendancePercentage: 75 },
-  { subject: "Mobile Development", attendancePercentage: 80 }
-];
-
-const seedDB = async () => {
+const seedData = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log("Connected to MongoDB for seeding...");
 
     // Clear existing data
-    await Assignment.deleteMany({});
-    await Notice.deleteMany({});
-    await Event.deleteMany({});
-    await Lecture.deleteMany({});
-    await Attendance.deleteMany({});
+    await Promise.all([
+      Assignment.deleteMany({}),
+      Notice.deleteMany({}),
+      Event.deleteMany({}),
+      Lecture.deleteMany({}),
+      Attendance.deleteMany({}),
+      User.deleteMany({}),
+      Notification.deleteMany({})
+    ]);
+
     console.log("Cleared existing collections.");
 
-    // Insert sample data
-    await Assignment.insertMany(sampleAssignments);
-    await Notice.insertMany(sampleNotices);
-    await Event.insertMany(sampleEvents);
-    await Lecture.insertMany(sampleLectures);
-    await Attendance.insertMany(sampleAttendance);
+    // Create Test User
+    const testUser = await User.create({
+      name: "Test Student",
+      email: "test@isu.ac.in",
+      password: "password123",
+      studentId: "PINGU001",
+      college: "Pingu University",
+      role: "student"
+    });
 
-    console.log("Successfully seeded the database with demo data! 🌱");
-    process.exit(0);
-  } catch (error) {
-    console.error("Seeding Error:", error);
+    console.log("Created Test User: test@pingu.com / password123");
+
+    const userId = testUser._id;
+
+    // Seed Assignments
+    await Assignment.insertMany([
+      { user: userId, title: "AI Research Paper", subject: "Artificial Intelligence", dueDate: new Date(Date.now() + 172800000), status: "pending" },
+      { user: userId, title: "Database Optimization Lab", subject: "Database Systems", dueDate: new Date(Date.now() + 864000000), status: "submitted" },
+      { user: userId, title: "Mobile App Prototypes", subject: "Mobile Development", dueDate: new Date(Date.now() + 1728000000), status: "pending" }
+    ]);
+
+    // Seed Notices
+    await Notice.insertMany([
+      { user: userId, title: "Mid-Term Examination Schedule", description: "The exam schedule is out.", date: new Date() },
+      { user: userId, title: "Hackathon Registration Open", description: "Join the 48-hour build session.", date: new Date() }
+    ]);
+
+    // Seed Events
+    await Event.insertMany([
+      { user: userId, title: "Tech Symposium 2026", date: new Date(Date.now() + 432000000), time: "10:00 AM", location: "Main Auditorium" },
+      { user: userId, title: "Alumni Meetup", date: new Date(Date.now() + 1296000000), time: "06:00 PM", location: "Campus Garden" }
+    ]);
+
+    // Seed Lectures
+    await Lecture.insertMany([
+       { user: userId, subject: "Artificial Intelligence", professor: "Dr. Sharma", time: "09:00 AM", room: "Hall A" },
+       { user: userId, subject: "Mobile Development", professor: "Prof. Gupta", time: "11:30 AM", room: "Lab 3" },
+       { user: userId, subject: "Operating Systems", professor: "Prof. Mehta", time: "02:00 PM", room: "Room 210" }
+    ]);
+
+    // Seed Attendance
+    await Attendance.insertMany([
+      { user: userId, subject: "Artificial Intelligence", attendancePercentage: 85 },
+      { user: userId, subject: "Database Systems", attendancePercentage: 92 },
+      { user: userId, subject: "Mobile Development", attendancePercentage: 78 },
+      { user: userId, subject: "Low Attendance Subject", attendancePercentage: 60 }
+    ]);
+
+    console.log("Successfully seeded the database with user-specific demo data! 🌱");
+    process.exit();
+  } catch (err) {
+    console.error("Seeding error:", err);
     process.exit(1);
   }
 };
 
-seedDB();
+seedData();

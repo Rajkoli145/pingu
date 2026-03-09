@@ -1,8 +1,8 @@
 const Attendance = require("../models/Attendance");
 
 class AttendanceService {
-  async getAllAttendance() {
-    const records = await Attendance.find();
+  async getAllAttendance(userId) {
+    const records = await Attendance.find({ user: userId });
     
     if (!records || records.length === 0) {
       return {
@@ -11,6 +11,7 @@ class AttendanceService {
         subjects: []
       };
     }
+// ... rest of the method
 
     const totalAttendance = records.reduce((acc, curr) => acc + curr.attendancePercentage, 0);
     const overallAttendance = Math.round(totalAttendance / records.length);
@@ -28,20 +29,23 @@ class AttendanceService {
     };
   }
 
-  async createRecord(data) {
-    const attendance = new Attendance(data);
+  async createRecord(userId, data) {
+    const attendance = new Attendance({
+      ...data,
+      user: userId
+    });
     return await attendance.save();
   }
 
-  async updateRecord(id, data) {
-    return await Attendance.findByIdAndUpdate(id, data, {
+  async updateRecord(userId, id, data) {
+    return await Attendance.findOneAndUpdate({ _id: id, user: userId }, data, {
       new: true,
       runValidators: true
     });
   }
 
-  async deleteRecord(id) {
-    return await Attendance.findByIdAndDelete(id);
+  async deleteRecord(userId, id) {
+    return await Attendance.findOneAndDelete({ _id: id, user: userId });
   }
 }
 

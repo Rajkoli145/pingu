@@ -1,8 +1,12 @@
 import { Attendance } from "../types/models";
+import { getAuthToken } from "./auth";
 
 export const getAttendance = async (): Promise<Attendance[]> => {
   try {
-    const response = await fetch("http://localhost:5001/attendance");
+    const token = getAuthToken();
+    const response = await fetch("http://localhost:5001/attendance", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -10,7 +14,7 @@ export const getAttendance = async (): Promise<Attendance[]> => {
     // The backend returns { overallAttendance, subjects, ... }
     // However the frontend expects Attendance[] for subjects.
     return data.subjects.map((sub: any, index: number) => ({
-      id: String(index + 1),
+      id: sub.id || String(index + 1),
       subject: sub.subject,
       attended: Math.round((sub.attendance / 100) * 20), // Placeholder logic for mock UI
       total: 20

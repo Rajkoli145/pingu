@@ -1,8 +1,13 @@
+import { getAuthToken } from "./auth";
+
 const API_URL = "http://localhost:5001";
 
 export const getCommandCenterSummary = async () => {
   try {
-    const response = await fetch(`${API_URL}/command-center`);
+    const token = getAuthToken();
+    const response = await fetch(`${API_URL}/command-center`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!response.ok) {
       throw new Error(`Command Center Sync Error: ${response.status}`);
     }

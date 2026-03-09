@@ -1,8 +1,12 @@
 import { Lecture } from "../types/models";
+import { getAuthToken } from "./auth";
 
 export const getLectures = async (): Promise<Lecture[]> => {
   try {
-    const response = await fetch("http://localhost:5001/lectures");
+    const token = getAuthToken();
+    const response = await fetch("http://localhost:5001/lectures", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

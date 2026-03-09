@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const AssignmentSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: [true, "Assignment must belong to a user"]
+  },
   title: {
     type: String,
     required: true

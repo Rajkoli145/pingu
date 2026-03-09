@@ -1,8 +1,12 @@
 import { Assignment } from "../types/models";
+import { getAuthToken } from "./auth";
 
 export const getAssignments = async (): Promise<Assignment[]> => {
   try {
-    const response = await fetch("http://localhost:5001/assignments");
+    const token = getAuthToken();
+    const response = await fetch("http://localhost:5001/assignments", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

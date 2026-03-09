@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema(
   {
-    title: {
+    user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: [true, "Notification must belong to a user"]
+  },
+  title: {
       type: String,
       required: true
     },

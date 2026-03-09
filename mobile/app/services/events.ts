@@ -1,8 +1,12 @@
 import { Event } from "../types/models";
+import { getAuthToken } from "./auth";
 
 export const getEvents = async (): Promise<Event[]> => {
   try {
-    const response = await fetch("http://localhost:5001/events");
+    const token = getAuthToken();
+    const response = await fetch("http://localhost:5001/events", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
